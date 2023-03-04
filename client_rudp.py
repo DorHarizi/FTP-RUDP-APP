@@ -1,11 +1,15 @@
 import socket
+import time
+
 import sender
 
 IP = socket.gethostbyname(socket.gethostname())
-PORT = 4456
+PORT = 4455
 ADDR = (IP, PORT)
 FORMAT = "utf-8"
 SIZE = 1024
+CLIENT_DATA_PATH = "client_files"
+SERVER_DATA_PATH = "server_files"
 
 
 def main():
@@ -28,16 +32,33 @@ def main():
 
         if cmd == "HELP":
             client.send(cmd.encode(FORMAT))
+
         elif cmd == "LOGOUT":
             client.send(cmd.encode(FORMAT))
             break
+
         elif cmd == "LIST":
             client.send(cmd.encode(FORMAT))
+
         elif cmd == "DELETE":
             client.send(f"{cmd}@{data[1]}".encode(FORMAT))
+
         elif cmd == "UPLOAD":
-            path = data[1]
-            sender.send_file(path, ADDR[0], ADDR[1])
+            path = f"{CLIENT_DATA_PATH}/{data[1]}"
+            client.send(f"{cmd}@{data[1]}".encode(FORMAT))
+            time.sleep(5)
+            sender.send_file(path, ADDR[0], 9999)
+
+        elif cmd == "DOWNLOAD":
+            client.send(f"{cmd}@{data[1]}".encode(FORMAT))
+            filename = data[1]
+            filename = f"{CLIENT_DATA_PATH}/{filename}"
+            time.sleep(5)
+            receiver.receive_file(filename, IP, 9999)
+            print(f"the file downloaded {filename}")
+
+        else:
+            client.send("WRONG".encode(FORMAT))
 
     print("Disconnected from the server.")
     client.close()

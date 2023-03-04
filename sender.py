@@ -3,60 +3,80 @@ import os
 import threading
 import time
 
-MAX_PACKETS = 10
-MAX_PACKET_SIZE = 1024
+MAX_PACKET_SIZE = 1020
+
+
+def increase_win() -> int:
+    pass
+
+
+def decrease_win() -> int:
+    pass
+
+
+def increase_time() -> int:
+    pass
+
+
+def decrease_time() -> int:
+    pass
 
 
 def send_packet(packet, host, port, sock):
     sock.sendto(packet, (host, port))
-    while True:
-        try:
-            data, addr = sock.recvfrom(MAX_PACKET_SIZE)
-            if data == b"ACK" and addr[0] == host:
-                break
-        except socket.timeout:
-            sock.sendto(packet, (host, port))
+    print(f"packet send{int.from_bytes(packet[:4], byteorder='big', signed=True)}")
 
 
 def send_file(filename, host, port):
-
+    window = 1
+    finish = -1
+    finish = finish.to_bytes(4, byteorder="big", signed=True)
     with open(filename, "rb") as f:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        print(f"{host}, {port}")
         sock.settimeout(1)
         packets = []
         base = 0
-        nextseqnum = 0
+        index = 0
+        last_ack = -1
 
         while True:
             data = f.read(MAX_PACKET_SIZE)
+            suq = index.to_bytes(4, byteorder="big", signed=True)
             if not data:
                 break
-            packets.append(data)
+            packets.append(suq + data)
+            index += 1
 
-        while base < len(packets):
-            threads = []
-            for i in range(base, min(base + MAX_PACKETS, len(packets))):
-                packet = packets[i]
-                t = threading.Thread(target=send_packet, args=(packet, host, port, sock))
-                threads.append(t)
-                t.start()
+        while last_ack + 1 < len(packets):
+            flag = True
+            while flag:
+                flag = False
+                count = 0
+                for i in range(last_ack + 1, min(base + window, len(packets))):
+                    packet = packets[i]
+                    send_packet(packet, host, port, sock)
+                    count += 1
+                for j in range(count):
+                    try:
+                        data, addr = sock.recvfrom(4)
+                        num = int.from_bytes(data[:4], byteorder="big", signed=True)
+                        if last_ack < num:
+                            last_ack = num
+                        else:
+                            sock.settimeout(increase_time())
+                    except socket.timeout:
+                        sock.settimeout(increase_time())
+                        window = (decrease_win())
+                        flag2 = True
+                        flag = True
+            if not flag2:
+                sock.settimeout(decrease_time())
+                window = (increase_win())
+            base = last_ack
 
-            start_time = time.time()
-            for t in threads:
-                t.join(1.0 - (time.time() - start_time))
-
-            for i in range(base, min(base + MAX_PACKETS, len(packets))):
-                if i == nextseqnum:
-                    nextseqnum += 1
-                    if base < nextseqnum:
-                        base = nextseqnum
-
-            if nextseqnum == len(packets):
-                MAX_PACKETS += 1
-
-            while nextseqnum >= base + MAX_PACKETS:
-                time.sleep(0.01)
-
+        print("close connection")
+        sock.sendto(finish, (host, port))
         sock.close()
 
 

@@ -5,23 +5,28 @@ def receive_file(filename, ip, port):
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((ip, port))
+    print(f"{ip}, {port}")
 
     with open(filename, "wb") as f:
         expectedseqnum = 0
         while True:
             data, addr = sock.recvfrom(1024)
-            if not data:
-                break
-            seqnum = int.from_bytes(data[:4], byteorder="big")
+            seqnum = int.from_bytes(data[:4], byteorder="big", signed=True)
             packet = data[4:]
+            if seqnum == -1:
+                break
+            # print(data)
             if seqnum == expectedseqnum:
                 f.write(packet)
+                f.flush()
+                print("write to the file")
                 expectedseqnum += 1
-                sock.sendto(b"ACK", addr)
+                print(f"send ACK{seqnum}")
+                sock.sendto(data[:4], addr)
             elif seqnum < expectedseqnum:
-                sock.sendto(b"ACK", addr)
-            else:
-                sock.sendto(b"ACK", addr)
+                print(f"send ACK{seqnum}")
+                sock.sendto(data[:4], addr)
+    print("close connection")
     sock.close()
 
 

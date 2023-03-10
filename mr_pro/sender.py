@@ -39,6 +39,7 @@ def send_file(filename, host, port):
         base = 0
         index = 0
         last_ack = -1
+        flag2 = False
 
         while True:
             data = f.read(MAX_PACKET_SIZE)

@@ -9,7 +9,7 @@ PORT = 4455
 ADDR = (IP, PORT)
 MAX_PACKET_SIZE = 1024
 FORMAT = "utf-8"
-SERVER_DATA_PATH = "server_files"
+SERVER_DATA_PATH = ""
 
 
 def handle_client(conn, addr):

@@ -119,6 +119,7 @@ def click_app():
     window_app = Tk()
     window_app.geometry("900x900")
     window_app.title("FTP Application")
+    client_app = app.client_app()
 
     label = Label(window_app,
                   text="Welcome to the Application server\n "
@@ -131,7 +132,7 @@ def click_app():
 
     button_getList = Button(window_app,
                             text='Get list of the server files',
-                            command=click_getList,
+                            command=lambda: click_getList(client_app),
                             font=("Comic Sans", 18),
                             fg="green",
                             bg='black',
@@ -182,7 +183,7 @@ def click_app():
 
     button_disconnect = Button(window_app,
                                text='Disconnect from the server',
-                               command=click_dhcp,
+                               command=lambda: click_disconnected(client_app, window_app),
                                font=("Comic Sans", 18),
                                fg="green",
                                bg='black',

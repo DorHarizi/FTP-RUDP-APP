@@ -5,16 +5,16 @@ import threading
 import receiver
 
 IP = socket.gethostbyname(socket.gethostname())
-PORT = 4455
+PORT = 4456
 ADDR = (IP, PORT)
 MAX_PACKET_SIZE = 1024
 FORMAT = "utf-8"
-SERVER_DATA_PATH = ""
+SERVER_DATA_PATH = 'server_files'
 
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
-    conn.send("msg@Welcome to the File Server.".encode(FORMAT))
+    # conn.send("msg@Welcome to the File Server.".encode(FORMAT))
 
     while True:
         data = conn.recv(MAX_PACKET_SIZE).decode(FORMAT)
@@ -22,7 +22,7 @@ def handle_client(conn, addr):
         cmd = data[0]
 
         if cmd == "LIST":
-            files = os.listdir(SERVER_DATA_PATH)
+            files = os.listdir('server_files')
             send_data = "msg@"
 
             if len(files) == 0:
@@ -31,19 +31,11 @@ def handle_client(conn, addr):
                 send_data += "\n".join(f for f in files)
             conn.send(send_data.encode(FORMAT))
 
-        elif cmd == "HELP":
-            data = "msg@"
-            data += "LIST: List all the files from the server.\n"
-            data += "UPLOAD <path>: Upload a file to the server.\n"
-            data += "DELETE <filename>: Delete a file from the server.\n"
-            data += "LOGOUT: Disconnect from the server.\n"
-            data += "HELP: List all the commands."
-            conn.send(data.encode(FORMAT))
-
         elif cmd == "DELETE":
             files = os.listdir(SERVER_DATA_PATH)
             send_data = "msg@"
             filename = data[1]
+            print(f"{filename}")
 
             if len(files) == 0:
                 send_data += "The server directory is empty"
@@ -53,6 +45,7 @@ def handle_client(conn, addr):
                     send_data += "File deleted successfully."
                 else:
                     send_data += "File not found."
+            print(f"{send_data}, {filename}")
             conn.send(send_data.encode(FORMAT))
 
         elif cmd == "UPLOAD":
@@ -69,10 +62,10 @@ def handle_client(conn, addr):
             client.send(f"{cmd}@{data[1]}".encode(FORMAT))
             sender.send_file(path, ADDR[0], 9999)
 
-        elif cmd == "LOGOUT":
+        elif cmd == "DISCONNECTED":
             break
 
-        elif cmd == 'WRONG':
+        else:
             conn.send(f"msg@Command does not exist".encode(FORMAT))
 
     print(f"[DISCONNECTED] {addr} disconnected")

@@ -8,7 +8,7 @@ PORT = 4455
 ADDR = (IP, PORT)
 FORMAT = "utf-8"
 SIZE = 1024
-CLIENT_DATA_PATH = "../client_files"
+CLIENT_DATA_PATH = "client_files"
 SERVER_DATA_PATH = ""
 
 

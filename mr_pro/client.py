@@ -1,18 +1,11 @@
-import socket
-import receiver
-
-IP = socket.gethostbyname(socket.gethostname())
-PORT = 4455
-ADDR = (IP, PORT)
-FORMAT = "utf-8"
-SIZE = 1024
+import client_dns
+import client_app
+import client_dhcp
 
 
-def main():
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(ADDR)
-    receiver.receive_file('client_files/delete_big.png', IP, PORT)
+class client:
 
-
-if __name__ == "__main__":
-    main()
+    def __init__(self):
+        self.client_dns = client_dns.client_dns()
+        self.client_dhcp = client_dhcp.client_dhcp()
+        self.client_app = client_app.client_app()

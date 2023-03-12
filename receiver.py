@@ -10,7 +10,7 @@ def receive_file(filename, ip, port):
     with open(filename, "wb") as f:
         expectedseqnum = 0
         while True:
-            data, addr = sock.recvfrom(1024)
+
             seqnum = int.from_bytes(data[:4], byteorder="big", signed=True)
             packet = data[4:]
             if seqnum == -1:
@@ -31,7 +31,7 @@ def receive_file(filename, ip, port):
 
 
 if __name__ == "__main__":
-    receive_file("delete_big.png", "localhost", 1234)
+    receive_file("mr_pro/delete_big.png", "localhost", 1234)
 
 #
 # def checksum(data):

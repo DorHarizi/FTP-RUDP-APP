@@ -14,32 +14,18 @@ class client_app:
     """
 
     def __init__(self):
-        ip_server = '192.168.1.19'
-        port_server = 4455
+        ip_server = socket.gethostbyname(socket.gethostname())
+        port_server = 4456
         self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.addr_server = (ip_server, port_server)
+        self.stop = False
         self.run()
+
 
 
     def run(self):
         self.socket_client.connect(self.addr_server)
-        print(f"client connected to server")
-        while True:
-            packet = self.socket_client.recv(PACKET_SIZE).decode(FORMAT)
-            cmd, data = packet.split("@")
-
-            if cmd == "DISCONNECTED":
-                print("the client disconnected from the server")
-                break
-            if cmd == "MESSAGE":
-                print(f'[message from client]{data}')
-            if cmd == "LIST":
-                self.socket_client.send(cmd.encode(FORMAT))
-
-
-
-        client.close()
-        print(" the client close the connection")
+        print(f"client_app connected to server")
 
 
 

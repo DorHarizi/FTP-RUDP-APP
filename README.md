@@ -1,8 +1,6 @@
 # myPro
 # Final prject in Network course
 
-![live-chat-apps-1280x720](https://user-images.githubusercontent.com/77808208/161371714-ef18d90d-4e16-473c-9d14-fb1fc7ad5198.jpg)
-
 ## General overview
 This project is about primitive chat application over TCP with file transfer over fast reliable UDP.
 

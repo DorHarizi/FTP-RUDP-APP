@@ -25,11 +25,18 @@ class server_dns:
                 self.socket.sendto(self.dns_table[domain_name].encode('utf-8'), addr)
                 print(f"in if: domain_name:{domain_name}, ip domain_name:{self.dns_table[domain_name]}")
             else:
-                ip_address = socket.gethostbyname(domain_name)
-                self.dns_table[domain_name] = ip_address
+                try:
+                    ip_address = socket.gethostbyname(domain_name)
+                    self.dns_table[domain_name] = ip_address
+                except:
+                    ip_address = "NO VALUE, PLEASE TRY AGAIN"
                 self.socket.sendto(ip_address.encode('utf-8'), addr)
                 print(f"domain_name:{domain_name}, ip with port:{addr}")
         print("Server DNS close")
         self.socket.close()
+
+
+if __name__ == "__main__":
+    server_dns().run()
 
 

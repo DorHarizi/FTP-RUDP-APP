@@ -1,10 +1,14 @@
-import socket
+# import socket
+import rudp_socket
+from rudp_socket import RUDPSocket, RUDPPacket
 
 
 def receive_file(filename, ip, port):
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((ip, port))
+    # rudp_socket_inst = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # rudp_socket_inst.bind((ip, port))
+    rudp_socket_inst = RUDPSocket()
+    rudp_socket_inst.socket.bind(ip, port)
     print(f"{ip}, {port}")
     # list_packet = {}
 

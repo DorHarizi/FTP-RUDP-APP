@@ -3,7 +3,9 @@ import os
 import threading
 import time
 
-MAX_PACKET_SIZE = 1020
+from rudp_socket import RUDPSocket, RUDPPacket
+
+MAX_PACKET_SIZE = 1024
 
 
 
@@ -11,6 +13,22 @@ MAX_PACKET_SIZE = 1020
 # def send_packet(packet, host, port, sock):
 #     sock.sendto(packet, (host, port))
 #     print(f"packet send{int.from_bytes(packet[:4], byteorder='big', signed=True)}")
+
+def parse_file_for_send(filename):
+    packets = []
+    with open(filename, "rb") as f:
+        index = 0
+        while True:
+            data = f.read(MAX_PACKET_SIZE - 4)
+            if not data:
+                break
+            packet = RUDPPacket()
+            packet.seqnum = index
+            packet.data = data
+            packets.append(packet.pack())
+            index += 1
+    return packets
+
 
 def send_file(filename, host, port):
     window = 1
@@ -52,8 +70,8 @@ def send_file(filename, host, port):
         base = last_ack
 
         print("close connection")
-        sock.sendto(finish, (host, port))
-        sock.close()
+        rudp_socket_inst.sendto(finish.pack(), (host, port))
+        rudp_socket_inst.socket.close()
 
 
 if __name__ == "__main__":

@@ -6,32 +6,38 @@ def receive_file(filename, ip, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((ip, port))
     print(f"{ip}, {port}")
+    # list_packet = {}
 
     with open(filename, "wb") as f:
+        print("write")
         expectedseqnum = 0
         while True:
-
-            seqnum = int.from_bytes(data[:4], byteorder="big", signed=True)
-            packet = data[4:]
-            if seqnum == -1:
-                break
-            # print(data)
-            if seqnum == expectedseqnum:
-                f.write(packet)
-                f.flush()
-                print("write to the file")
-                expectedseqnum += 1
-                print(f"send ACK{seqnum}")
-                sock.sendto(data[:4], addr)
-            elif seqnum < expectedseqnum:
-                print(f"send ACK{seqnum}")
-                sock.sendto(data[:4], addr)
+            try:
+                data , addr= rudp_socket_inst.socket.recvfrom(1024)
+                packet = RUDPPacket.unpack(data)
+                if packet.seqnum == -1:
+                    break
+                # print(data)
+                ack_packet = RUDPPacket()
+                ack_packet.seqnum = packet.seqnum
+                if packet.seqnum == expectedseqnum:
+                    f.write(packet.data)
+                    f.flush()
+                    print("write to the file")
+                    expectedseqnum += 1
+                    print(f"send ACK{packet.seqnum}")
+                    rudp_socket_inst.sendto(data, addr)
+                elif packet.seqnum < expectedseqnum:
+                    print(f"send ACK{seqnum}")
+                    rudp_socket_inst.sendto(data, addr)
+            except Exception as e:
+                print(e)
     print("close connection")
-    sock.close()
+    rudp_socket_inst.socket.close()
 
 
 if __name__ == "__main__":
-    receive_file("mr_pro/delete_big.png", "localhost", 1234)
+    receive_file("server_files/delete_big.png", "localhost", 1234)
 
 #
 # def checksum(data):

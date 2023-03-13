@@ -6,75 +6,50 @@ import time
 MAX_PACKET_SIZE = 1020
 
 
-def increase_win() -> int:
-    pass
 
 
-def decrease_win() -> int:
-    pass
-
-
-def increase_time() -> int:
-    pass
-
-
-def decrease_time() -> int:
-    pass
-
-
-def send_packet(packet, host, port, sock):
-    sock.sendto(packet, (host, port))
-    print(f"packet send{int.from_bytes(packet[:4], byteorder='big', signed=True)}")
-
+# def send_packet(packet, host, port, sock):
+#     sock.sendto(packet, (host, port))
+#     print(f"packet send{int.from_bytes(packet[:4], byteorder='big', signed=True)}")
 
 def send_file(filename, host, port):
     window = 1
-    finish = -1
-    finish = finish.to_bytes(4, byteorder="big", signed=True)
-    with open(filename, "rb") as f:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        print(f"{host}, {port}")
-        sock.settimeout(1)
-        packets = []
-        base = 0
-        index = 0
-        last_ack = -1
-        flag2 = False
+    finish = RUDPPacket()
+    finish.seqnum = -1
+    packets = parse_file_for_send(filename)
+    rudp_socket_inst = RUDPSocket()
+    print(f"{host}, {port}")
+    base = 0
+    last_ack = -1
+    # flag2 = False
 
-        while True:
-            data = f.read(MAX_PACKET_SIZE)
-            suq = index.to_bytes(4, byteorder="big", signed=True)
-            if not data:
-                break
-            packets.append(suq + data)
-            index += 1
-
-        while last_ack + 1 < len(packets):
-            flag = True
-            while flag:
-                flag = False
-                count = 0
-                for i in range(last_ack + 1, min(base + window, len(packets))):
-                    packet = packets[i]
-                    send_packet(packet, host, port, sock)
-                    count += 1
-                for j in range(count):
-                    try:
-                        data, addr = sock.recvfrom(4)
-                        num = int.from_bytes(data[:4], byteorder="big", signed=True)
-                        if last_ack < num:
-                            last_ack = num
-                        else:
-                            sock.settimeout(increase_time())
-                    except socket.timeout:
-                        sock.settimeout(increase_time())
-                        window = (decrease_win())
-                        flag2 = True
-                        flag = True
-            if not flag2:
-                sock.settimeout(decrease_time())
-                window = (increase_win())
-            base = last_ack
+    while last_ack + 1 < len(packets):
+        flag = True
+        while flag:
+            flag = False
+            rounds = 0
+            for i in range(last_ack + 1, min(base + window, len(packets))):
+                rudp_socket_inst.sendto(packets[i], (host, port))
+                rounds += 1
+            for j in range(rounds):
+                try:
+                    data, addr = rudp_socket_inst.socket.recvfrom(MAX_PACKET_SIZE)
+                    num = RUDPPacket.unpack(data).seqnum
+                    if last_ack < num:
+                        last_ack = num
+                        window += 1
+                    # else:
+                    #     sock.settimeout(increase_time())
+                except socket.timeout:
+                    pass
+                    # sock.settimeout(increase_time())
+                    # window = (decrease_win())
+                    # flag2 = True
+        #             # flag = True
+        # if not flag2:
+        #     sock.settimeout(decrease_time())
+        #     window = (increase_win())
+        base = last_ack
 
         print("close connection")
         sock.sendto(finish, (host, port))

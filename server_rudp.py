@@ -5,7 +5,7 @@ import threading
 import receiver
 
 IP = socket.gethostbyname(socket.gethostname())
-PORT = 4456
+PORT = 4455
 ADDR = (IP, PORT)
 MAX_PACKET_SIZE = 1024
 FORMAT = "utf-8"
@@ -14,7 +14,7 @@ SERVER_DATA_PATH = 'server_files'
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
-    # conn.send("msg@Welcome to the File Server.".encode(FORMAT))
+    conn.send("msg@Welcome to the File Server.".encode(FORMAT))
 
     while True:
         data = conn.recv(MAX_PACKET_SIZE).decode(FORMAT)

@@ -8,36 +8,51 @@ IP_ADDRESS_SUFFIX = 1
 
 client_ip_map = {}
 
-def assign_ip_address(client_address):
-    global IP_ADDRESS_SUFFIX
-    if client_address in client_ip_map:
-        print(f'{client_address} already has an IP address of {client_ip_map[client_address]}')
-        return client_ip_map[client_address]
-    else:
-        ip_address = IP_ADDRESS_PREFIX + str(IP_ADDRESS_SUFFIX)
-        IP_ADDRESS_SUFFIX += 1
-        client_ip_map[client_address] = ip_address
-        print(f'{client_address} has been assigned IP address {ip_address}')
-        return ip_address
+class server_dns:
 
-def start_server():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-        server_socket.bind((SERVER_IP, SERVER_PORT))
-        server_socket.listen()
-        print(f'Server listening on {SERVER_IP}:{SERVER_PORT}')
-        while True:
-            connection_socket, client_address = server_socket.accept()
-            print(f'Accepted connection from {client_address}')
-            message = connection_socket.recv(1024)
-            if message.decode('utf-8') == 'discovery':
-                ip_address = assign_ip_address(client_address)
-                encoded_ip_address = ip_address.encode('utf-8')
-                connection_socket.sendall(encoded_ip_address)
-                client_ip_map[client_address] = ip_address
-            connection_socket.close()
+    def __init__(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.dns_table = {}
+        self.ip = socket.gethostbyname(socket.gethostname())
+        self.port = 9998
+        self.connected = True
+        self.run()
 
-if __name__ == '__main__':
-    start_server()
+
+    def run(self):
+        self.socket.bind((self.ip, 9998))
+        print(f"[LISTENING] Server is listening on IP:{self.ip} PORT:{self.port}")
+
+    def assign_ip_address(client_address):
+        global IP_ADDRESS_SUFFIX
+        if client_address in client_ip_map:
+            print(f'{client_address} already has an IP address of {client_ip_map[client_address]}')
+            return client_ip_map[client_address]
+        else:
+            ip_address = IP_ADDRESS_PREFIX + str(IP_ADDRESS_SUFFIX)
+            IP_ADDRESS_SUFFIX += 1
+            client_ip_map[client_address] = ip_address
+            print(f'{client_address} has been assigned IP address {ip_address}')
+            return ip_address
+
+    def start_server():
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+            server_socket.bind((SERVER_IP, SERVER_PORT))
+            server_socket.listen()
+            print(f'Server listening on {SERVER_IP}:{SERVER_PORT}')
+            while True:
+                connection_socket, client_address = server_socket.accept()
+                print(f'Accepted connection from {client_address}')
+                message = connection_socket.recv(1024)
+                if message.decode('utf-8') == 'discovery':
+                    ip_address = assign_ip_address(client_address)
+                    encoded_ip_address = ip_address.encode('utf-8')
+                    connection_socket.sendall(encoded_ip_address)
+                    client_ip_map[client_address] = ip_address
+                connection_socket.close()
+
+    if __name__ == '__main__':
+        start_server()
 
 
 

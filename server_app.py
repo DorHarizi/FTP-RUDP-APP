@@ -46,7 +46,9 @@ class server_app:
         print(f"[NEW CONNECTION] {addr} connected.")
 
         while True:
-            cmd = conn.recv(MAX_PACKET_SIZE).decode(FORMAT)
+            data = conn.recv(MAX_PACKET_SIZE).decode(FORMAT)
+            cmd, msg = data.split("@")
+            ip, _= addr
 
             if cmd == "LIST":
                 send_data = self.getList()
@@ -63,7 +65,7 @@ class server_app:
                 send_data = "msg@"
                 filename = data[1]
                 filename = f"{SERVER_DATA_PATH}/{filename}"
-                receiver.receive_file(filename, IP, 9999)
+                receiver.receive_file(filename, ip, 9999)
                 print(f"the file uploaded {filename}")
                 send_data += "the file uploaded"
                 conn.send(send_data.encode(FORMAT))
@@ -87,7 +89,7 @@ class server_app:
 
         while self.listening:
             conn, addr = self.socket_server.accept()
-            thread = threading.Thread(target=handle_client, args=(self, conn, addr))
+            thread = threading.Thread(target=self.handle_client, args=(conn, addr))
             thread.start()
             print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
         self.socket_server.close()

@@ -16,7 +16,7 @@ class client_app:
 
     def __init__(self):
         ip_server = socket.gethostbyname(socket.gethostname())
-        port_server = 4456
+        port_server = 9999
         self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.addr_server = (ip_server, port_server)
         self.stop = False
@@ -27,7 +27,7 @@ class client_app:
         file_name = os.path.basename(file_path)
         self.socket_client.send(f"UPLOAD@{file_name}".encode(FORMAT))
         time.sleep(5)
-        sender.send_file(file_path, self.ip, 9999)
+        sender.send_file(file_path, self.addr_server[0], self.addr_server[1])
         send_data = f"the file {file_name} is uploaded!"
         print(send_data)
         return send_data

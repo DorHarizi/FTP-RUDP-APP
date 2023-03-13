@@ -43,6 +43,9 @@ class server_dhcp:
             elif msg.decode('utf-8') == "ACK":
                 print(f"received ack for{addr[0]}")
 
+if __name__ == "__main__":
+    server_dhcp().run()
+
 
 
 

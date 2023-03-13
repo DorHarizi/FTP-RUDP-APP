@@ -1,33 +1,46 @@
-
+import sender
 import os
 import socket
 import threading
-
 import receiver
+import time
 
 MAX_PACKET_SIZE = 1024
 FORMAT = "utf-8"
 SERVER_DATA_PATH = 'server_files'
+CLIENT_DATA_PATH = "client_files"
 
 
 class server_app:
     def __init__(self):
-        self.ip = socket.gethostbyname(socket.gethostname())
-        self.port = 9999
-        self.ADDR = (self.ip, self.port)
+        self.ip_server_tcp = socket.gethostbyname(socket.gethostname())
+        self.port_server_tcp = 5555
+        self.ADDR_server = (self.ip_server_tcp, self.port_server_tcp)
         self.list_files = []
+        self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.running = True
         files = os.listdir('server_files')
         if not len(files) == 0:
             for f in files:
                 self.list_files.append(f)
-        self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.listening = True
-        self.run()
+
+    def downloadFile(self, msg):
+        file_path = f"{SERVER_DATA_PATH}/{msg}"
+        time.sleep(10)
+        sender.send_file(file_path, self.ip_server_tcp, 9999)
+        send_data = f"The file: {msg} downloaded"
+        return send_data
+
+    def uploadFile(self, msg):
+        file_path = f"{SERVER_DATA_PATH}/{msg}"
+        receiver.receive_file(file_path, self.ip_server_tcp, 9999)
+        send_data = f"The file: {msg} uploaded"
+        return send_data
 
     def deleteFile(self, file_name):
         send_data = ""
         if file_name in self.list_files:
-            os.remove(f"{SERVER_DATA_PATH}/{filename}")
+            os.remove(f"{SERVER_DATA_PATH}/{file_name}")
             send_data += "File deleted successfully."
         else:
             send_data += "File not found."
@@ -48,32 +61,23 @@ class server_app:
         while True:
             data = conn.recv(MAX_PACKET_SIZE).decode(FORMAT)
             cmd, msg = data.split("@")
-            ip, _= addr
 
             if cmd == "LIST":
                 send_data = self.getList()
                 conn.send(send_data.encode(FORMAT))
 
             elif cmd == "DELETE":
-                filename = data[1]
-                send_data = "msg@"
-                send_data += self.deleteFile(filename)
-                print(f"{send_data}, {filename}")
+                file_name = msg
+                send_data = self.deleteFile(file_name)
                 conn.send(send_data.encode(FORMAT))
 
             elif cmd == "UPLOAD":
-                send_data = "msg@"
-                filename = data[1]
-                filename = f"{SERVER_DATA_PATH}/{filename}"
-                receiver.receive_file(filename, ip, 9999)
-                print(f"the file uploaded {filename}")
-                send_data += "the file uploaded"
+                send_data = self.uploadFile(msg)
                 conn.send(send_data.encode(FORMAT))
 
             elif cmd == "DOWNLOAD":
-                path = f"{SERVER_DATA_PATH}/{data[1]}"
-                client.send(f"{cmd}@{data[1]}".encode(FORMAT))
-                sender.send_file(path, ADDR[0], 9999)
+                send_data = self.downloadFile(msg)
+                conn.send(send_data.encode(FORMAT))
 
             elif cmd == "DISCONNECTED":
                 break
@@ -83,15 +87,19 @@ class server_app:
 
     def run(self):
         print("[STARTING] Server is starting")
-        self.socket_server.bind((self.ip, self.port))
+        print(f"{self.ADDR_server}")
+        self.socket_server.bind(self.ADDR_server)
         self.socket_server.listen()
-        print(f"[LISTENING] Server is listening on IP:{self.ip} PORT:{self.port}")
+        print(f"[LISTENING] Server is listening on IP:{self.ip_server_tcp} PORT:{self.port_server_tcp}")
 
-        while self.listening:
+        while self.running:
             conn, addr = self.socket_server.accept()
             thread = threading.Thread(target=self.handle_client, args=(conn, addr))
             thread.start()
             print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
         self.socket_server.close()
 
+
+if __name__ == "__main__":
+    server_app().run()
 

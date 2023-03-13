@@ -1,6 +1,5 @@
 from tkinter import *
-
-import client_dhcp as dhcp
+from client_dhcp import client_dhcp
 import client_dns as dns
 import client_app as app
 import os
@@ -8,8 +7,29 @@ from tkinter import filedialog
 from tkinter import messagebox
 
 
+def submit_dhcp(client, label):
+    ip_domain_name = client.get_ip()
+    label.config(text=ip_domain_name)
+
+
 def click_dhcp():
     print("you click on server dhcp button")
+    client = client_dhcp()
+    window_dhcp = Tk()
+    window_dhcp.geometry("900x900")
+    window_dhcp.title("DHCP")
+    label = Label(window_dhcp,
+                  text="Welcome to the DHCP server\n ",
+                  font=('Ariel', 30, 'bold'),
+                  fg='black',
+                  bg='#8f9394',
+                  width=200,
+                  height=850)
+
+    button = Button(window_dhcp, text="Enter", command=lambda: submit_dhcp(client, label))
+
+    button.pack()
+    label.pack()
 
 
 ########################################################################################################################
@@ -22,7 +42,6 @@ def submit(client_dns, entry, label):
 
 
 def click_dns():
-    print("you click on server dns button")
     client_dns = dns.client_dns()
     window_dns = Tk()
     window_dns.geometry("900x900")
@@ -46,8 +65,8 @@ def click_dns():
 ########################################################################################################################
 ########################################################################################################################
 def click_stop(client_app):
-    client_app.stop = not client_app.stop
-    print(f"{client_app.stop}")
+    client_app.stop_ftp = not client_app.stop_ftp
+    print(f"{client_app.stop_ftp}")
 
 
 def click_downloadFile(client_app):
@@ -57,19 +76,16 @@ def click_downloadFile(client_app):
     file_path = filedialog.askopenfilename(initialdir=initial_dir)
     if file_path:
         file_name = os.path.basename(file_path)
-        print(f"{file_name} has been chosen")
         msg = client_app.downloadFile(file_name)
         messagebox.showinfo("title", msg)
         window_downloadFile.mainloop()
 
 
 def click_uploadFile(client_app):
-    print("you selected upload")
     window_uploadFile = Tk()
     window_uploadFile.withdraw()
     file_path = filedialog.askopenfilename()
     if file_path:
-        print(f"{file_path} has been chosen")
         msg = client_app.uploadFile(file_path)
         messagebox.showinfo("title", msg)
         window_uploadFile.mainloop()
@@ -96,6 +112,7 @@ def click_disconnected(client_app, window_app):
     client_app.disconnected()
     window_app.destroy()
     print("the client has been disconnected")
+    start()
 
 
 def click_deleteFile(client_app):
@@ -105,7 +122,6 @@ def click_deleteFile(client_app):
     file_path = filedialog.askopenfilename(initialdir=initial_dir)
     if file_path:
         file_name = os.path.basename(file_path)
-        print(f"{file_name} has been chosen")
         msg = client_app.deleteFile(file_name)
         messagebox.showinfo("title", msg)
         window_deleteFile.mainloop()
@@ -114,8 +130,8 @@ def click_deleteFile(client_app):
 ########################################################################################################################
 ########################################################################################################################
 
-def click_app():
-    print("you click on server app button")
+def click_app(window):
+    window.destroy()
     window_app = Tk()
     window_app.geometry("900x900")
     window_app.title("FTP Application")
@@ -202,6 +218,10 @@ def click_app():
 
 ########################################################################################################################
 ########################################################################################################################
+def logOut(window):
+    print("The client Log Out")
+    window.destroy()
+
 
 def start():
     # instantiate an instance of window
@@ -220,9 +240,9 @@ def start():
                   width=150,
                   height=100)
 
-    button_dhcp_server = Button(window,
-                                text='DHCP SERVER',
-                                # command=click_dhcp,
+    button_dhcp_client = Button(window,
+                                text='DHCP CLIENT',
+                                command=click_dhcp,
                                 font=("Comic Sans", 30),
                                 fg="green",
                                 bg='black',
@@ -230,8 +250,8 @@ def start():
                                 relief=RAISED,
                                 bd=20)
 
-    button_dns_server = Button(window,
-                               text='DNS SERVER',
+    button_dns_client = Button(window,
+                               text='DNS CLIENT',
                                command=click_dns,
                                font=("Comic Sans", 30),
                                fg="green",
@@ -240,22 +260,36 @@ def start():
                                relief=RAISED,
                                bd=20)
 
-    button_application_server = Button(window,
-                                       text='APPLICATION SERVER',
-                                       command=click_app,
+    button_application_client = Button(window,
+                                       text='APPLICATION CLIENT',
+                                       command=lambda: click_app(window),
                                        font=("Comic Sans", 30),
                                        fg="green",
                                        bg='black',
                                        activeforeground="black",
                                        relief=RAISED,
                                        bd=20)
+
+    button_logOut = Button(window,
+                           text='Log Out',
+                           command=lambda: logOut(window),
+                           font=("Comic Sans", 30),
+                           fg="green",
+                           bg='black',
+                           activeforeground="black",
+                           relief=RAISED,
+                           bd=20)
+
     label.pack()
-    button_dhcp_server.place(x=75, y=25)
-    button_dns_server.place(x=475, y=25)
-    button_application_server.place(x=175, y=175)
+    button_dhcp_client.place(x=75, y=25)
+    button_dns_client.place(x=475, y=25)
+    button_application_client.place(x=75, y=175)
+    button_logOut.place(x=600, y=175)
 
     # place window on the computer screen, listen for events
     window.mainloop()
 
 
-start()
+if __name__ == "__main__":
+    start()
+

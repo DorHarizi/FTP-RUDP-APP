@@ -9,3 +9,7 @@ then you will need to run the client_gui.py
 after you done that you will be pressented by the GUI we created so you can use our project with eass.
 you can choos the option of the server that you decided to run.
 
+
+## הפורטים שהתבקשו במטלה זה xxx20,yyy30 לפורטי היעד והמקור
+## במטלה השתמשנו בפורטים אחרים מכיוון שהמספרי תעודת זהות שלנו הם מעבר לשימוש החוקי בפורטים מאושר ע"י עמית דביר
+

@@ -1,5 +1,3 @@
----
-
 # Reliable UDP File Transfer Protocol
 
 ## Overview

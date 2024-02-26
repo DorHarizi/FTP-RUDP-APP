@@ -91,7 +91,8 @@ Through the GUI, users can connect to the server, upload, download files, and pe
 
 ### Video Demonstration
 
-[![Watch the Video](overViewApp.mp4)]
+[![Watch the Video]]([overViewApp.mp4](https://drive.google.com/drive/my-drive))
+
 
 ## Usage
 

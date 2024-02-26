@@ -91,7 +91,7 @@ Through the GUI, users can connect to the server, upload, download files, and pe
 
 ### Video Demonstration
 
-[![Watch the Video](mt.png)]([https://drive.google.com/drive/my-drive](https://drive.google.com/file/d/12QiezWmaaezafs7fDDwfTqPracNE7QlP/view?usp=drive_link))
+[![Watch the Video](mt.png)](https://drive.google.com/file/d/12QiezWmaaezafs7fDDwfTqPracNE7QlP/view?usp=drive_link)
 
 
 ## Usage

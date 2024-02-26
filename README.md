@@ -35,21 +35,69 @@ The DNS component allows clients to resolve domain names into IP addresses, faci
 2. **Lookup**: The DNS server looks up the domain name in its records.
 3. **Response**: The server responds with the corresponding IP address.
 
+To incorporate the instructions for running your application into the `README.md`, you can add a specific section dedicated to guiding users through the setup and execution process. Here’s how you can structure this section to ensure clarity and ease of use:
+
+---
+
+## Getting Started
+
+To use the application, follow the steps below to launch the various components in the correct order. Each component is a critical part of the infrastructure, enabling dynamic IP configuration, domain name resolution, and the core file transfer functionality.
+
+### Prerequisites
+
+Ensure Python is installed on your system and that you have administrative or sufficient privileges to bind applications to network ports.
+
+### Step 1: Start the DNS Server
+
+Run the DNS server to enable domain name resolution:
+
+```bash
+python server_dns.py
+```
+
+This server will handle queries for translating domain names into IP addresses.
+
+### Step 2: Launch the DHCP Server
+
+Start the DHCP server for dynamic IP address allocation:
+
+```bash
+python server_dhcp.py
+```
+
+This component assigns IP addresses to clients dynamically, facilitating network configuration.
+
+### Step 3: Activate the File Transfer Server
+
+Initialize the main file transfer server application:
+
+```bash
+python server_app.py
+```
+
+This server manages file upload, download, and other related operations.
+
+### Step 4: Run the Client Application
+
+Finally, start the client GUI to interact with the file transfer system:
+
+```bash
+python client_gui.py
+```
+
+Through the GUI, users can connect to the server, upload, download files, and perform other actions as supported by the application.
+
 ## Demonstrations
-
-### Application Screenshots
-
-![Application Screenshot](path/to/screenshot.png)
-
 
 ### Video Demonstration
 
 [![Video Demonstration](path/to/video_thumbnail.png)](path/to/video.mp4)
 
-
 ## Usage
 
-Detailed instructions on starting the server, running clients, and utilizing DHCP and DNS functionalities are provided in separate documentation files within the project repository.
+With all components running, you can use the client GUI to perform file transfers. Ensure the DHCP and DNS services are operational before attempting to connect through the client to ensure smooth functionality.
+
+This section provides clear, step-by-step instructions for setting up and running your application, from starting the necessary servers to launching the client interface. Adjust the filenames and paths as necessary to match your project's structure and ensure all prerequisites are met before proceeding with these steps.
 
 ## Conclusion
 

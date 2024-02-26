@@ -3,13 +3,42 @@
 ## Overview
 
 This project introduces a Reliable UDP (RUDP) File Transfer Protocol, engineered to provide a dependable method for file transmission over networks. Leveraging the simplicity of UDP, the protocol incorporates features to ensure the reliable delivery of files, addressing the inherent unreliability of UDP without the overhead of TCP. This implementation is particularly suited for environments where lightweight data transfer or high throughput is critical.
+---
 
-## Custom Protocol Description
+## Reliable UDP (RUDP) Protocol
 
-Our RUDP protocol introduces two main features to enhance reliability over UDP:
+### Background
 
-- **Sequence Numbering:** Each packet is assigned a unique sequence number, ensuring that data can be reassembled in the correct order despite the unordered nature of UDP.
-- **Acknowledgments (ACKs):** Receivers send back an acknowledgment for each packet received. Senders use these ACKs to verify delivery and resend packets as necessary.
+The Reliable UDP (RUDP) protocol is designed to offer the best of both worlds: the low overhead and high-speed transmission of UDP, coupled with the reliability features typically found in TCP. While UDP is favored for real-time applications due to its non-blocking send and receive operations, it lacks mechanisms for ensuring data integrity, order, and delivery. RUDP addresses these shortcomings, making it an excellent choice for applications that require both efficiency and reliability.
+
+### How RUDP Works
+
+RUDP enhances UDP by incorporating several key features:
+
+- **Sequence Numbers**: Every packet transmitted over RUDP is uniquely identified by a sequence number. This addition allows the receiving end to sort packets in their original order and identify any missing pieces of data.
+
+- **Acknowledgments (ACKs)**: Receivers send back an acknowledgment packet (ACK) for each successfully received packet. These ACKs inform the sender which packets have arrived safely, facilitating the retransmission of lost data.
+
+- **Retransmission of Lost Packets**: RUDP monitors ACKs from the receiver. If a packet doesn't receive an ACK within a specified timeout, it's considered lost and automatically retransmitted.
+
+- **Flow and Congestion Control**: Like TCP, RUDP implements flow control to prevent overwhelming the receiver and congestion control to adapt to network capacity. These mechanisms ensure efficient and fair use of network resources.
+
+### RUDP in This Project
+
+In our file transfer application, RUDP plays a crucial role in ensuring files are transmitted reliably and efficiently between clients and the server. Here's how we've implemented RUDP features:
+
+- **Packet Management**: Files are broken into numbered packets for transmission. Our application tracks these packets, ensuring each piece of the file is sent and acknowledged in order.
+
+- **Handling Lost Data**: The application detects packets that fail to be acknowledged within a certain timeframe, triggering a retransmission to handle potential data loss.
+
+- **Efficiency**: By leveraging RUDP, our application combines UDP's high throughput with the necessary reliability mechanisms, optimizing file transfer performance even over less reliable networks.
+
+### Demonstration
+
+Our application showcases RUDP's effectiveness in real-world scenarios, providing a robust solution for file transfers. Below are resources demonstrating the application in action:
+
+- **Screenshots**: ![Application Screenshot](path/to/screenshot.png)
+- **Video Demonstration**: [![Video Demonstration](path/to/video_thumbnail.png)](path/to/video.mp4)
 
 ## Implementation
 

@@ -37,6 +37,10 @@ The DNS component allows clients to resolve domain names into IP addresses, faci
 
 To incorporate the instructions for running your application into the `README.md`, you can add a specific section dedicated to guiding users through the setup and execution process. Here’s how you can structure this section to ensure clarity and ease of use:
 
+## Conclusion
+
+Our file transfer system showcases the potential of combining traditional protocols with modern enhancements to achieve high efficiency and reliability in data transmission. By integrating RUDP, DHCP, and DNS into a cohesive system, we address the complexities of network communications, offering a streamlined solution for file transfers.
+
 ---
 
 ## Getting Started
@@ -87,19 +91,10 @@ python client_gui.py
 
 Through the GUI, users can connect to the server, upload, download files, and perform other actions as supported by the application.
 
-## Demonstrations
-
-### Video Demonstration
-
-[![Watch the Video](mt.png)](https://drive.google.com/file/d/12QiezWmaaezafs7fDDwfTqPracNE7QlP/view?usp=drive_link)
-
-
 ## Usage
 
 With all components running, you can use the client GUI to perform file transfers. Ensure the DHCP and DNS services are operational before attempting to connect through the client to ensure smooth functionality.
 
-This section provides clear, step-by-step instructions for setting up and running your application, from starting the necessary servers to launching the client interface. Adjust the filenames and paths as necessary to match your project's structure and ensure all prerequisites are met before proceeding with these steps.
+### Video Demonstration
 
-## Conclusion
-
-Our file transfer system showcases the potential of combining traditional protocols with modern enhancements to achieve high efficiency and reliability in data transmission. By integrating RUDP, DHCP, and DNS into a cohesive system, we address the complexities of network communications, offering a streamlined solution for file transfers.
+[![Watch the Video](mt.png)](https://drive.google.com/file/d/12QiezWmaaezafs7fDDwfTqPracNE7QlP/view?usp=drive_link)

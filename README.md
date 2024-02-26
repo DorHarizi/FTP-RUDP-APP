@@ -91,7 +91,7 @@ Through the GUI, users can connect to the server, upload, download files, and pe
 
 ### Video Demonstration
 
-[![Watch the Video](path/to/)]([URL_TO_VIDEO](https://www.kapwing.com/videos/65dcf2de73340ac13d269d67))
+[![Watch the Video](Untitled_Export-vwnXSLKnR.png)]([URL_TO_VIDEO](https://www.kapwing.com/videos/65dcf2de73340ac13d269d67))
 
 ## Usage
 

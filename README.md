@@ -1,5 +1,3 @@
-Implementing Markdown (MD) code directly in this environment is not possible, but I can guide you on writing the `README.md` content for your project. Below is the markdown content that you can use for your `README.md` file. This template includes sections that describe your project, the protocol, implementation details, and placeholders for images and videos.
-
 ---
 
 # Reliable UDP File Transfer Protocol

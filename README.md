@@ -7,7 +7,7 @@ This project introduces a Reliable UDP (RUDP) File Transfer Protocol, engineered
 
 ## Reliable UDP (RUDP) Protocol
 
-### Background
+## Background
 
 The Reliable UDP (RUDP) protocol is designed to offer the best of both worlds: the low overhead and high-speed transmission of UDP, coupled with the reliability features typically found in TCP. While UDP is favored for real-time applications due to its non-blocking send and receive operations, it lacks mechanisms for ensuring data integrity, order, and delivery. RUDP addresses these shortcomings, making it an excellent choice for applications that require both efficiency and reliability.
 

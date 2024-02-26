@@ -91,7 +91,7 @@ Through the GUI, users can connect to the server, upload, download files, and pe
 
 ### Video Demonstration
 
-[![Video Demonstration](path/to/video_thumbnail.png)](overViewApp.mp4)
+[![Watch the Video](path/to/video_thumbnail.png)](URL_TO_VIDEO)
 
 ## Usage
 

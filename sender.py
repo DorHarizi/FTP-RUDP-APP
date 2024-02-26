@@ -1,81 +1,86 @@
 import socket
 import os
-import threading
-import time
 
-MAX_PACKETS = 10  # Maximum packets to send before waiting for ACK
-MAX_PACKET_SIZE = 1020  # Maximum data payload size in bytes for each packet
+# Constants defining the packet behavior and transmission properties.
+MAX_PACKETS = 10  # The window size for the number of packets sent before requiring an ACK.
+MAX_PACKET_SIZE = 1020  # The size of the data payload in each packet.
 
 def send_packet(packet, host, port, sock):
     """
-    Sends a single packet to a specified host and port using a given socket.
+    Sends a single packet to the specified destination using UDP.
     
+    This function is responsible for the actual transmission of a data packet. It also logs the sequence
+    number of the packet being sent, providing visibility into the packet flow.
+
     Parameters:
-    - packet: The packet data to be sent.
-    - host: The destination host IP address.
-    - port: The destination port number.
-    - sock: The socket object used for sending the packet.
+    - packet: The data packet to be sent, including its sequence number.
+    - host: IP address of the destination.
+    - port: Port number at the destination.
+    - sock: The UDP socket through which the packet is sent.
     """
     sock.sendto(packet, (host, port))
-    print(f"Number packet sent is: {int.from_bytes(packet[:4], byteorder='big',signed=True)}")
+    print(f"Packet with sequence number {int.from_bytes(packet[:4], byteorder='big', signed=True)} sent.")
 
 def send_file(filename, host, port):
     """
-    Sends a file to a specified host and port, breaking the file into packets,
-    and managing acknowledgments to ensure reliable transfer.
-    
-    Parameters:
-    - filename: The path to the file to be sent.
-    - host: The destination host IP address.
-    - port: The destination port number.
-    """
-    finish = -1
-    finish = finish.to_bytes(4, byteorder="big", signed=True)  # Finish packet marker
-    with open(filename, "rb") as f:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(1)  # Set socket timeout for ACK waiting
-        packets = []  # To hold all file packets
-        base = 0  # Base index for window
-        index = 0  # Packet sequence number
-        last_ack = -1  # Last ACK received
+    Implements a simple reliable file transfer over UDP by splitting the file into packets,
+    transmitting these packets within a sliding window, and handling acknowledgments (ACKs)
+    to ensure all packets are received in order.
 
-        # Read the file and create packets
+    Parameters:
+    - filename: Path to the file to be sent.
+    - host: Destination host IP address.
+    - port: Destination port number.
+    """
+    # Special packet to signify the end of the file transfer.
+    finish = (-1).to_bytes(4, byteorder="big", signed=True)
+
+    # Initialize socket and set a timeout for ACKs.
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(1)
+
+    packets = []  # Stores the packets to be sent.
+    base = 0  # Tracks the beginning of the sliding window.
+    index = 0  # Sequence number for the packets.
+    last_ack = -1  # The last sequence number acknowledged by the receiver.
+
+    # Open the file, read its contents, and prepare packets.
+    with open(filename, "rb") as f:
         while True:
             data = f.read(MAX_PACKET_SIZE)
-            seq = index.to_bytes(4, byteorder="big",signed=True)  # Packet sequence number
             if not data:
-                break  # End of file
-            packets.append(seq + data)  # Add packet to the list
+                break  # End of file reached.
+            seq = index.to_bytes(4, byteorder="big", signed=True)
+            packets.append(seq + data)  # Append sequence number to data payload.
             index += 1
 
-        # Send packets and manage ACKs
-        while last_ack + 1 < len(packets):
-            flag = True
-            while flag:
-                flag = False
-                count = 0  # Count of packets sent
-                # Send window of packets
-                for i in range(base, min(base + MAX_PACKETS, len(packets))):
-                    if last_ack < i:
-                        print("Sending packet")
-                        packet = packets[i]
-                        send_packet(packet, host, port, sock)
-                        count += 1
-                # Receive ACKs
-                for j in range(count):
-                    try:
-                        data, addr = sock.recvfrom(4)
-                        num = int.from_bytes(data[:4], byteorder="big", signed=True)
-                        print(f"Expected ACK {num}")
-                        if last_ack < num:
-                            last_ack = num
-                    except socket.timeout:
-                        flag = True  # Timeout, retransmit window
-            base = last_ack + 1  # Move window
+    # Begin sending packets and managing ACKs within the sliding window.
+    while last_ack + 1 < len(packets):
+        # Attempt to send and acknowledge all packets in the window.
+        flag = True  # Indicates if we need to resend packets due to timeout.
+        while flag:
+            flag = False
+            count = 0  # Number of packets sent in this iteration.
+            for i in range(base, min(base + MAX_PACKETS, len(packets))):
+                if i > last_ack:
+                    send_packet(packets[i], host, port, sock)
+                    count += 1
+            # Wait for ACKs.
+            for _ in range(count):
+                try:
+                    ack, _ = sock.recvfrom(4)
+                    ack_num = int.from_bytes(ack, byteorder="big", signed=True)
+                    if ack_num > last_ack:
+                        last_ack = ack_num
+                        flag = False  # ACK received, no need to resend.
+                except socket.timeout:
+                    flag = True  # Timeout occurred, resend packets in the window.
+            base = last_ack + 1  # Slide the window forward based on the last ACK received.
 
-        print("Closing connection")
-        sock.sendto(finish, (host, port))  # Send finish packet
-        sock.close()
+    # Transmission complete, send the finish signal and close the socket.
+    print("File transfer complete. Closing connection.")
+    sock.sendto(finish, (host, port))
+    sock.close()
 
 if __name__ == "__main__":
     send_file('path/to/your/file', 'destination_host_ip', 9999)

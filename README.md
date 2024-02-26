@@ -1,71 +1,43 @@
-# Reliable UDP File Transfer Protocol
+Combining all the elements you've requested, including the introduction of your project, explanations of the RUDP protocol, DHCP, and DNS functionalities, along with guidance on multimedia content, here's a comprehensive `README.md` for your project:
+
+---
+
+# Reliable File Transfer System over RUDP
 
 ## Overview
 
-This project introduces a Reliable UDP (RUDP) File Transfer Protocol, engineered to provide a dependable method for file transmission over networks. Leveraging the simplicity of UDP, the protocol incorporates features to ensure the reliable delivery of files, addressing the inherent unreliability of UDP without the overhead of TCP. This implementation is particularly suited for environments where lightweight data transfer or high throughput is critical.
----
+This project introduces a robust file transfer system built on Reliable UDP (RUDP), enhanced with custom implementations of DHCP (Dynamic Host Configuration Protocol) and DNS (Domain Name System) functionalities. Designed to combine UDP's efficiency with TCP-like reliability, our system ensures fast and reliable file transfers, dynamic IP address allocation, and effective domain name resolution.
 
 ## Reliable UDP (RUDP) Protocol
 
-## Background
+RUDP adds reliability features to UDP transmissions, including sequence numbering for packet order and integrity, acknowledgments (ACKs) for received packets, retransmission of lost packets, and control mechanisms for flow and congestion. This protocol serves as the foundation of our file transfer system, ensuring data integrity and delivery without the overhead of TCP.
 
-The Reliable UDP (RUDP) protocol is designed to offer the best of both worlds: the low overhead and high-speed transmission of UDP, coupled with the reliability features typically found in TCP. While UDP is favored for real-time applications due to its non-blocking send and receive operations, it lacks mechanisms for ensuring data integrity, order, and delivery. RUDP addresses these shortcomings, making it an excellent choice for applications that require both efficiency and reliability.
+### Features
 
-### How RUDP Works
+- **Sequence Numbers & ACKs**: Guarantees data order and confirms packet delivery.
+- **Retransmission**: Lost packets are automatically resent based on missing ACKs.
+- **Flow & Congestion Control**: Dynamically adjusts transmission rate to network conditions.
 
-RUDP enhances UDP by incorporating several key features:
+## DHCP Implementation
 
-- **Sequence Numbers**: Every packet transmitted over RUDP is uniquely identified by a sequence number. This addition allows the receiving end to sort packets in their original order and identify any missing pieces of data.
+Our system includes a DHCP server for dynamic IP address allocation. This feature automatically assigns IP addresses to client devices, managing network configurations without manual setup.
 
-- **Acknowledgments (ACKs)**: Receivers send back an acknowledgment packet (ACK) for each successfully received packet. These ACKs inform the sender which packets have arrived safely, facilitating the retransmission of lost data.
+### DHCP Workflow
 
-- **Retransmission of Lost Packets**: RUDP monitors ACKs from the receiver. If a packet doesn't receive an ACK within a specified timeout, it's considered lost and automatically retransmitted.
+1. **Discovery**: Clients broadcast a discovery message to identify available DHCP servers.
+2. **Offer**: The DHCP server offers an IP address to the client.
+3. **Request**: The client requests the offered IP address.
+4. **Acknowledgment**: The server assigns the IP address to the client and sends an acknowledgment.
 
-- **Flow and Congestion Control**: Like TCP, RUDP implements flow control to prevent overwhelming the receiver and congestion control to adapt to network capacity. These mechanisms ensure efficient and fair use of network resources.
+## DNS Functionality
 
-### RUDP in This Project
+The DNS component allows clients to resolve domain names into IP addresses, facilitating connections to the server using human-readable names rather than numeric IP addresses.
 
-In our file transfer application, RUDP plays a crucial role in ensuring files are transmitted reliably and efficiently between clients and the server. Here's how we've implemented RUDP features:
+### DNS Process
 
-- **Packet Management**: Files are broken into numbered packets for transmission. Our application tracks these packets, ensuring each piece of the file is sent and acknowledged in order.
-
-- **Handling Lost Data**: The application detects packets that fail to be acknowledged within a certain timeframe, triggering a retransmission to handle potential data loss.
-
-- **Efficiency**: By leveraging RUDP, our application combines UDP's high throughput with the necessary reliability mechanisms, optimizing file transfer performance even over less reliable networks.
-
-### Demonstration
-
-Our application showcases RUDP's effectiveness in real-world scenarios, providing a robust solution for file transfers. Below are resources demonstrating the application in action:
-
-- **Screenshots**: ![Application Screenshot](path/to/screenshot.png)
-- **Video Demonstration**: [![Video Demonstration](path/to/video_thumbnail.png)](path/to/video.mp4)
-
-## Implementation
-
-The project is structured into several key components:
-
-- **Sender:** Breaks down files into packets, manages packet transmission, and handles ACKs to ensure all packets are successfully delivered.
-- **Receiver:** Listens for incoming packets, checks sequence numbers to assemble the file in order, and sends ACKs for received packets.
-
-### Classes and Functions
-
-- `server_app.py`: Implements the server-side logic, including file upload, download, and deletion functionalities.
-- `client_app.py`: Handles client-side operations, such as connecting to the server and initiating file transfers.
-- `sender.py` and `receiver.py`: Contain the core logic for sending and receiving files over RUDP.
-
-## Usage
-
-To start the server:
-
-```bash
-python server_app.py
-```
-
-To run a client:
-
-```bash
-python client_app.py
-```
+1. **Query**: A client sends a query to the DNS server with the domain name.
+2. **Lookup**: The DNS server looks up the domain name in its records.
+3. **Response**: The server responds with the corresponding IP address.
 
 ## Demonstrations
 
@@ -81,10 +53,14 @@ python client_app.py
 
 *Replace `path/to/video_thumbnail.png` and `path/to/video.mp4` with actual paths to your video thumbnail and video file, respectively.*
 
+## Usage
+
+Detailed instructions on starting the server, running clients, and utilizing DHCP and DNS functionalities are provided in separate documentation files within the project repository.
+
 ## Conclusion
 
-This project successfully demonstrates a practical application of RUDP for file transfers, offering a balance between the efficiency of UDP and the reliability of TCP. It stands as a testament to the potential for custom protocols to meet specific network performance and reliability requirements.
+Our file transfer system showcases the potential of combining traditional protocols with modern enhancements to achieve high efficiency and reliability in data transmission. By integrating RUDP, DHCP, and DNS into a cohesive system, we address the complexities of network communications, offering a streamlined solution for file transfers.
 
 ---
 
-Remember to replace placeholder paths with actual paths to your project's screenshots and demonstration videos. Hosting these files on a platform like GitHub, YouTube, or a personal website, and linking them in your README, is a common practice.
+Ensure to replace placeholder paths with actual links to your project's multimedia content to enrich the README. This comprehensive guide should give users a clear understanding of your project's purpose, functionality, and usage.

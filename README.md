@@ -1,7 +1,3 @@
-Combining all the elements you've requested, including the introduction of your project, explanations of the RUDP protocol, DHCP, and DNS functionalities, along with guidance on multimedia content, here's a comprehensive `README.md` for your project:
-
----
-
 # Reliable File Transfer System over RUDP
 
 ## Overview
@@ -45,13 +41,11 @@ The DNS component allows clients to resolve domain names into IP addresses, faci
 
 ![Application Screenshot](path/to/screenshot.png)
 
-*Replace `path/to/screenshot.png` with the actual path to your screenshot.*
 
 ### Video Demonstration
 
 [![Video Demonstration](path/to/video_thumbnail.png)](path/to/video.mp4)
 
-*Replace `path/to/video_thumbnail.png` and `path/to/video.mp4` with actual paths to your video thumbnail and video file, respectively.*
 
 ## Usage
 
@@ -60,7 +54,3 @@ Detailed instructions on starting the server, running clients, and utilizing DHC
 ## Conclusion
 
 Our file transfer system showcases the potential of combining traditional protocols with modern enhancements to achieve high efficiency and reliability in data transmission. By integrating RUDP, DHCP, and DNS into a cohesive system, we address the complexities of network communications, offering a streamlined solution for file transfers.
-
----
-
-Ensure to replace placeholder paths with actual links to your project's multimedia content to enrich the README. This comprehensive guide should give users a clear understanding of your project's purpose, functionality, and usage.
